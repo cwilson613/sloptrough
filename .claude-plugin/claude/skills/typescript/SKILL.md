@@ -1,0 +1,202 @@
+---
+name: typescript
+description: TypeScript development conventions. Covers strict typing, async patterns, error handling, Node.js API usage, and testing. Use when creating or modifying TypeScript code.
+---
+
+# TypeScript Development Skill
+
+Conventions for TypeScript code.
+
+## Strict Typing
+
+- **Never use `any`** as a type annotation. Use `unknown` and narrow, or define a proper interface.
+- **Prefer `interface` over `type`** for object shapes (better error messages, extensibility).
+- **Use `as const` assertions** for literal arrays used as union sources.
+- **Import types separately**: `import type { Foo } from "./bar.js"` — keeps runtime imports clean.
+
+```typescript
+// Bad
+const data: any = await resp.json();
+function process(items: any[]) { ... }
+
+// Good
+interface ApiResponse { data: Model[]; total: number; }
+const data: ApiResponse = await resp.json();
+function process(items: readonly Model[]) { ... }
+```
+
+## Async Patterns
+
+### Don't mark functions `async` unless they `await`
+
+```typescript
+// Bad — wraps return value in an extra promise
+const text = async (msg: string) => ({ content: msg });
+
+// Good
+const text = (msg: string) => ({ content: msg });
+```
+
+### Don't `.then(r => r)` — it's a no-op identity transform
+
+```typescript
+// Bad
+resolve(text("done").then(r => r));
+
+// Good
+resolve(text("done"));
+```
+
+### Avoid `new Promise()` when `async/await` suffices
+
+```typescript
+// Bad — Promise constructor anti-pattern
+function doWork(): Promise<string> {
+  return new Promise((resolve) => {
+    someCallback((result) => resolve(result));
+  });
+}
+
+// Good
+import { promisify } from "node:util";
+const doWork = promisify(someCallback);
+```
+
+### Exception: `new Promise()` is correct for wrapping event-emitter APIs
+
+```typescript
+// Correct — child process exit is event-based, not promise-based
+function runCommand(cmd: string): Promise<number> {
+  return new Promise((resolve) => {
+    const child = spawn("sh", ["-c", cmd]);
+    child.on("exit", (code) => resolve(code ?? 1));
+    child.on("error", () => resolve(1));
+  });
+}
+```
+
+## Error Handling
+
+- **Never swallow errors silently** — at minimum log or return an error indicator.
+- **Use `catch` with typed narrowing**, not `catch (e: any)`.
+- **Prefer returning error objects** over throwing in tool handlers.
+
+```typescript
+// Bad
+try { await riskyOp(); } catch { }
+
+// Good — intentional ignore with comment
+try { await riskyOp(); } catch { /* expected: file may not exist */ }
+
+// Good — error narrowing
+try {
+  await riskyOp();
+} catch (err) {
+  const message = err instanceof Error ? err.message : String(err);
+  return { error: message };
+}
+```
+
+## Node.js API Usage
+
+### Use `node:` prefix for built-in modules
+
+```typescript
+// Bad
+import { readFileSync } from "fs";
+
+// Good
+import { readFileSync } from "node:fs";
+```
+
+### Use `execSync` only for quick checks, never for long-running operations
+
+```typescript
+// Good — quick binary check
+function hasBinary(name: string): boolean {
+  try { execSync(`which ${name}`, { stdio: "ignore" }); return true; }
+  catch { return false; }
+}
+
+// Bad — blocking install
+execSync("cargo install my-tool");
+
+// Good — async spawn for install
+const child = spawn("cargo", ["install", "my-tool"], { stdio: "pipe" });
+```
+
+### Cache expensive checks that won't change mid-session
+
+```typescript
+let _hasOllama: boolean | null = null;
+function hasOllama(): boolean {
+  if (_hasOllama !== null) return _hasOllama;
+  try { execSync("which ollama", { stdio: "ignore" }); _hasOllama = true; }
+  catch { _hasOllama = false; }
+  return _hasOllama;
+}
+```
+
+## Testing with `node:test`
+
+Use the built-in Node.js test runner when possible:
+
+```typescript
+import { describe, it } from "node:test";
+import * as assert from "node:assert/strict";
+
+describe("myModule", () => {
+  it("does the thing", () => {
+    assert.equal(myFunc(1), 2);
+  });
+
+  it("handles edge cases", () => {
+    assert.throws(() => myFunc(-1), /must be positive/);
+  });
+});
+```
+
+### Test conventions
+
+- **Test files**: `*.test.ts` co-located with source.
+- **Test behavior, not implementation** — assert on public API results, not internal state.
+- **Include negative tests** — error paths, invalid inputs, boundary values.
+- **No mocking frameworks** — use dependency injection or simple stubs.
+
+## Module Conventions
+
+- **Use `.js` extensions in imports** — TypeScript requires this for ESM resolution even though source files are `.ts`.
+- **Named exports** for utility modules (types, helpers).
+- **No barrel files** (`index.ts` that re-exports everything) — import directly from the source module.
+
+## Code Organization
+
+- **Single responsibility**: one concept per file. Split when a file exceeds ~400 lines.
+- **Types first**: define interfaces at the top or in a `types.ts` file.
+- **Pure functions in separate modules**: domain logic separate from wiring.
+
+## Type Checking
+
+Projects using runtime transpilation (tsx, esbuild, etc.) **must** run `tsc --noEmit` as a separate type-checking gate. Runtime transpilers strip types without checking them.
+
+```bash
+# Add to package.json scripts
+"typecheck": "tsc --noEmit"
+"check": "tsc --noEmit && npm test"
+```
+
+### The Shadow Interface Anti-Pattern
+
+**Never redefine types that exist in an upstream SDK.** When you copy-paste an interface instead of importing it, your local "shadow" drifts from the real type as the SDK evolves.
+
+```typescript
+// Bad — drifts silently
+interface ToolResult {
+  content: { type: string; text: string }[];
+}
+
+// Good — import from SDK
+import type { ToolResult } from "@some/sdk";
+```
+
+**Directive:** Always import SDK types. Never redefine them locally. If an SDK type is not exported, file an issue or use module augmentation.

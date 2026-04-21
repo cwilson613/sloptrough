@@ -1,0 +1,20 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "qrypt-plugins",
+  "description": "Qrypt engineering team Claude Code plugins",
+  "owner": {
+    "name": "Qrypt Engineering"
+  },
+  "plugins": [
+    {
+      "name": "qrypt-tools",
+      "description": "Engineering tools, development conventions, and workflow automation for the Qrypt platform team",
+      "version": "0.1.0",
+      "author": {
+        "name": "Qrypt Engineering"
+      },
+      "source": "./",
+      "category": "productivity"
+    }
+  ]
+}

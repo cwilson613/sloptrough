@@ -1,0 +1,10 @@
+{
+  "name": "qrypt-tools",
+  "version": "0.1.0",
+  "description": "Qrypt engineering tools, development conventions, and workflow automation",
+  "author": {
+    "name": "Qrypt Engineering"
+  },
+  "license": "UNLICENSED",
+  "skills": "./.claude-plugin/claude/skills/"
+}
