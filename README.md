@@ -30,37 +30,92 @@ Engineering tools, development conventions, and workflow automation for platform
 | **chronos** | Authoritative date context from system clock — eliminates AI date calculation errors |
 | **identity** | Auth status across dev tools (git, GitHub, AWS, Azure, K8s, OCI, Cloudflare, GCP, npm) |
 
+## Prerequisites
+
+- [Claude Code](https://claude.ai/code) CLI installed
+- `jq` on PATH (required by statusline and scripts)
+
 ## Installation
 
-### From GitHub
+### Quick Start (fork + local install)
+
+The intended workflow: fork this repo to your org, clone it, symlink it in. `git pull` updates the plugin instantly — no reinstall.
+
+**1. Fork and clone**
 
 ```bash
-# In Claude Code, run:
-/plugins install cwilson613/sloptrough
+# Fork on GitHub first, then:
+git clone https://github.com/<your-org>/sloptrough ~/sloptrough
 ```
 
-### Manual (local development)
-
-1. Clone this repo
-2. Symlink into the Claude Code plugins directory:
+**2. Symlink into Claude Code plugins**
 
 ```bash
 mkdir -p ~/.claude/plugins/marketplaces/sloptrough
-ln -s /path/to/this/repo/.claude-plugin ~/.claude/plugins/marketplaces/sloptrough/.claude-plugin
+ln -s ~/sloptrough/.claude-plugin ~/.claude/plugins/marketplaces/sloptrough/.claude-plugin
 ```
+
+**3. Register the marketplace**
+
+Add to `~/.claude/plugins/known_marketplaces.json`:
+
+```json
+{
+  "sloptrough": {
+    "source": {
+      "source": "local",
+      "path": "/Users/<you>/sloptrough"
+    },
+    "installLocation": "/Users/<you>/.claude/plugins/marketplaces/sloptrough",
+    "lastUpdated": "2026-04-21T00:00:00.000Z"
+  }
+}
+```
+
+**4. Register the plugin**
+
+Add to `~/.claude/plugins/installed_plugins.json` under `"plugins"`:
+
+```json
+{
+  "sloptrough@sloptrough": [
+    {
+      "scope": "user",
+      "installPath": "/Users/<you>/.claude/plugins/marketplaces/sloptrough",
+      "version": "0.1.0",
+      "installedAt": "2026-04-21T00:00:00.000Z",
+      "lastUpdated": "2026-04-21T00:00:00.000Z"
+    }
+  ]
+}
+```
+
+**5. Enable the plugin**
+
+Add to `~/.claude/settings.json`:
+
+```json
+{
+  "enabledPlugins": {
+    "sloptrough@sloptrough": true
+  }
+}
+```
+
+**6. Restart Claude Code** — skills should appear in the `/` command menu.
 
 ### Statusline (optional)
 
 Context fill bar with identity, git status, and model info:
 
 ```
-● cwilson@host in myrepo ✓ | Opus 4.6 (1M context) | ▓▓▓▓░░░░░░░░░░░░░░░░ 20%
+● you@host in myrepo ✓ | Opus 4.6 (1M context) | ▓▓▓▓░░░░░░░░░░░░░░░░ 20%
 ```
 
-Symlink and configure:
+Green <50%, yellow 50-75%, red >=75%.
 
 ```bash
-ln -sf /path/to/this/repo/.claude-plugin/scripts/statusline.sh ~/.claude/statusline.sh
+ln -sf ~/sloptrough/.claude-plugin/scripts/statusline.sh ~/.claude/statusline.sh
 ```
 
 Add to `~/.claude/settings.json`:
@@ -74,11 +129,37 @@ Add to `~/.claude/settings.json`:
 }
 ```
 
+### Verify
+
+After restart, confirm the plugin loaded:
+
+```bash
+# Session-start hook should print script paths:
+#   sloptrough v0.1.0 — scripts available:
+#     chronos: /Users/<you>/.claude/plugins/marketplaces/sloptrough/.claude-plugin/claude/skills/chronos/chronos.sh
+#     identity: /Users/<you>/.claude/plugins/marketplaces/sloptrough/.claude-plugin/claude/skills/identity/identity.sh
+
+# Test skills are available:
+/chronos
+/identity
+/distill
+```
+
 ## Script Discovery
 
 Skills that include scripts (`chronos`, `identity`) need their absolute paths resolved at runtime — plugin directories aren't on `PATH`. A `SessionStart` hook runs automatically and prints the resolved script paths into Claude's context, so Claude knows where to find them.
 
 This is intentional: deterministic scripts > inline markdown commands. A script produces identical output every time, handles cross-platform differences in one place, and can be tested outside of Claude. Inline instructions get paraphrased, skipped, or hallucinated around.
+
+## Updating
+
+Because the plugin is symlinked from your local clone:
+
+```bash
+cd ~/sloptrough && git pull
+```
+
+That's it. Next Claude Code session picks up the changes automatically.
 
 ## Provenance
 
