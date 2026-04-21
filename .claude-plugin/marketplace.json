@@ -1,17 +1,17 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "qrypt-plugins",
-  "description": "Qrypt engineering team Claude Code plugins",
+  "name": "sloptrough",
+  "description": "Claude Code plugin — engineering skills and workflow automation",
   "owner": {
-    "name": "Qrypt Engineering"
+    "name": "cwilson613"
   },
   "plugins": [
     {
-      "name": "qrypt-tools",
-      "description": "Engineering tools, development conventions, and workflow automation for the Qrypt platform team",
+      "name": "sloptrough",
+      "description": "Engineering tools, development conventions, and workflow automation for platform teams",
       "version": "0.1.0",
       "author": {
-        "name": "Qrypt Engineering"
+        "name": "cwilson613"
       },
       "source": "./",
       "category": "productivity"

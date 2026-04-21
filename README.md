@@ -1,6 +1,6 @@
-# qrypt-tools — Claude Code Plugin
+# sloptrough — Claude Code Plugin
 
-Engineering tools, development conventions, and workflow automation for the Qrypt platform team.
+Engineering tools, development conventions, and workflow automation for platform teams.
 
 ## Skills (10)
 
@@ -32,33 +32,21 @@ Engineering tools, development conventions, and workflow automation for the Qryp
 
 ## Installation
 
-### From GitHub (recommended)
-
-Once this repo is pushed to a Qrypt GitHub org:
+### From GitHub
 
 ```bash
 # In Claude Code, run:
-/plugins install <org>/qrypt-tools
+/plugins install cwilson613/sloptrough
 ```
 
 ### Manual (local development)
 
 1. Clone this repo
-2. In Claude Code settings (`~/.claude/settings.json`), add the plugin path:
-
-```json
-{
-  "enabledPlugins": {
-    "qrypt-tools@local": true
-  }
-}
-```
-
-Or symlink into the Claude Code plugins directory:
+2. Symlink into the Claude Code plugins directory:
 
 ```bash
-mkdir -p ~/.claude/plugins/marketplaces/qrypt-plugins
-ln -s /path/to/this/repo/.claude-plugin ~/.claude/plugins/marketplaces/qrypt-plugins/.claude-plugin
+mkdir -p ~/.claude/plugins/marketplaces/sloptrough
+ln -s /path/to/this/repo/.claude-plugin ~/.claude/plugins/marketplaces/sloptrough/.claude-plugin
 ```
 
 ## Provenance

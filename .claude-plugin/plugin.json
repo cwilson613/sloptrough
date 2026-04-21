@@ -1,10 +1,10 @@
 {
-  "name": "qrypt-tools",
+  "name": "sloptrough",
   "version": "0.1.0",
-  "description": "Qrypt engineering tools, development conventions, and workflow automation",
+  "description": "Engineering tools, development conventions, and workflow automation for platform teams",
   "author": {
-    "name": "Qrypt Engineering"
+    "name": "cwilson613"
   },
-  "license": "UNLICENSED",
+  "license": "MIT",
   "skills": "./.claude-plugin/claude/skills/"
 }

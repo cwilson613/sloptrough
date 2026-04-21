@@ -84,24 +84,6 @@ The `sync` command derives git identity from GitHub:
 3. Sets `git config --global user.name` and `user.email`
 4. Configures `gh` as git credential helper
 
-## Azure DevOps Git Authentication
-
-For repos on Azure DevOps (dev.azure.com), git credentials use PAT authentication:
-
-1. Create PAT in Azure DevOps with Code (Read & Write) scope
-2. On first `git clone`/`push`, paste PAT when prompted
-3. macOS Keychain / credential manager caches it for future operations
-
-If credentials expire:
-```bash
-# Clear cached credential (macOS)
-git credential-osxkeychain erase
-host=dev.azure.com
-protocol=https
-
-# Next git operation will prompt for new PAT
-```
-
 ## Per-Repo Git Identity
 
 For repos requiring different git identity:
@@ -122,7 +104,7 @@ Local config overrides global. Check with `git config user.email` (shows effecti
 | gh not authenticated | `gh auth login` |
 | OCI push denied | `gh auth refresh -s write:packages` then re-login podman |
 | Wrong AWS account | `export AWS_PROFILE=correct-profile` |
-| Azure DevOps PAT expired | Clear cached credential, re-authenticate |
+| Azure not authenticated | `az login` |
 
 ## Philosophy
 
