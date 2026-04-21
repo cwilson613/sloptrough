@@ -49,6 +49,31 @@ mkdir -p ~/.claude/plugins/marketplaces/sloptrough
 ln -s /path/to/this/repo/.claude-plugin ~/.claude/plugins/marketplaces/sloptrough/.claude-plugin
 ```
 
+### Statusline (optional)
+
+Context fill bar with identity, git status, and model info:
+
+```
+● cwilson@host in myrepo ✓ | Opus 4.6 (1M context) | ▓▓▓▓░░░░░░░░░░░░░░░░ 20%
+```
+
+Symlink and configure:
+
+```bash
+ln -sf /path/to/this/repo/.claude-plugin/scripts/statusline.sh ~/.claude/statusline.sh
+```
+
+Add to `~/.claude/settings.json`:
+
+```json
+{
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh"
+  }
+}
+```
+
 ## Script Discovery
 
 Skills that include scripts (`chronos`, `identity`) need their absolute paths resolved at runtime — plugin directories aren't on `PATH`. A `SessionStart` hook runs automatically and prints the resolved script paths into Claude's context, so Claude knows where to find them.
