@@ -1,9 +1,9 @@
 ---
-name: date-context
+name: chronos
 description: Authoritative date context from system clock. Use before any date calculations, weekly reporting, or relative date references to eliminate AI calculation errors.
 ---
 
-# Date Context Skill
+# Chronos — System Clock Date Context
 
 Eliminates AI date calculation errors by providing authoritative date context from the system.
 
@@ -17,13 +17,14 @@ LLMs frequently make errors when calculating:
 
 ## Solution
 
-Use the `date-context.sh` script to get authoritative date information. Never calculate dates manually.
+Run the `chronos` script (path provided at session start) to get authoritative date information. **Never calculate dates manually.**
 
 ## Usage
 
 ```bash
-# Get full date context
-date-context.sh
+# The absolute path to chronos.sh is printed at session start.
+# Look for "chronos:" in the session-start hook output and use that path.
+/path/to/chronos.sh
 ```
 
 ### Output Format
@@ -46,6 +47,14 @@ Invoke this skill before any operation involving:
 - Scheduling references ("this week", "last week")
 - Date-stamped entries
 - Any relative date calculations
+
+## Why a Script
+
+Inline markdown instructions ("run `date +%Y-%m-%d`") are fragile — Claude may paraphrase, skip steps, or recombine commands incorrectly. A deterministic script:
+- Produces identical output every time
+- Handles cross-platform differences (BSD vs GNU date) in one place
+- Is testable outside of Claude
+- Can't be "hallucinated around"
 
 ## Platform Support
 

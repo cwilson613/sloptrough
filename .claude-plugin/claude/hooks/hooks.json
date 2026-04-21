@@ -1,0 +1,18 @@
+{
+  "description": "sloptrough plugin hooks — script path discovery at session start",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/hooks/session-start.sh",
+            "timeout": 5,
+            "statusMessage": "Loading sloptrough scripts..."
+          }
+        ]
+      }
+    ]
+  }
+}

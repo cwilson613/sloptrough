@@ -15,19 +15,21 @@ Never include AI attribution in commits, PRs, code, or documentation. Verify ide
 
 ## Usage
 
+Run the `identity` script (path provided at session start) with the desired domains. The absolute path to `identity.sh` is printed by the session-start hook — look for "identity:" in that output.
+
 ```bash
 # Default: check git and GitHub
-identity.sh
+/path/to/identity.sh
 
 # Check specific domains
-identity.sh git
-identity.sh docker aws
+/path/to/identity.sh git
+/path/to/identity.sh docker aws
 
 # Check all domains
-identity.sh all
+/path/to/identity.sh all
 
 # Sync git config from GitHub (sets user.name, user.email, credential helper)
-identity.sh sync
+/path/to/identity.sh sync
 ```
 
 ### Output Example

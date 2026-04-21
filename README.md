@@ -27,7 +27,7 @@ Engineering tools, development conventions, and workflow automation for platform
 ### Utilities
 | Skill | Description |
 |-------|-------------|
-| **date-context** | Authoritative date context from system clock — eliminates AI date calculation errors |
+| **chronos** | Authoritative date context from system clock — eliminates AI date calculation errors |
 | **identity** | Auth status across dev tools (git, GitHub, AWS, Azure, K8s, OCI, Cloudflare, GCP, npm) |
 
 ## Installation
@@ -49,9 +49,15 @@ mkdir -p ~/.claude/plugins/marketplaces/sloptrough
 ln -s /path/to/this/repo/.claude-plugin ~/.claude/plugins/marketplaces/sloptrough/.claude-plugin
 ```
 
+## Script Discovery
+
+Skills that include scripts (`chronos`, `identity`) need their absolute paths resolved at runtime — plugin directories aren't on `PATH`. A `SessionStart` hook runs automatically and prints the resolved script paths into Claude's context, so Claude knows where to find them.
+
+This is intentional: deterministic scripts > inline markdown commands. A script produces identical output every time, handles cross-platform differences in one place, and can be tested outside of Claude. Inline instructions get paraphrased, skipped, or hallucinated around.
+
 ## Provenance
 
-- **cleave, distill, iterator, visualizer, helm-operations, date-context, identity** — adapted from [recro/coe-agent](https://github.com/recro/coe-agent) (recro-tools v1.5.1)
+- **cleave, distill, iterator, visualizer, helm-operations, chronos, identity** — adapted from [recro/coe-agent](https://github.com/recro/coe-agent) (recro-tools v1.5.1)
 - **rust, typescript, security** — ported from [styrene-lab/omegon-pi](https://github.com/styrene-lab/omegon-pi) skills
 
 ## Customization

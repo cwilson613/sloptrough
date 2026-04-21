@@ -6,5 +6,6 @@
     "name": "cwilson613"
   },
   "license": "MIT",
-  "skills": "./.claude-plugin/claude/skills/"
+  "skills": "./.claude-plugin/claude/skills/",
+  "hooks": "./.claude-plugin/claude/hooks/hooks.json"
 }
